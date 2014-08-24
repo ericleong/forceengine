@@ -50,8 +50,6 @@ import forceengine.physics.PhysicsMath;
 import forceengine.physics.integrator.EulerIntegrator;
 import forceengine.physics.integrator.RK4Integrator;
 
-// TODO: convert into using input
-// TODO: convert graphics into a layer to access other 2D graphics libraries
 public class ForceEngineDemo implements Runnable {
 	private JFrame Window;
 	private Thread runner;

@@ -134,7 +134,8 @@ public class PhysicsEngine implements Accelerator {
 			if(!f.isFrozen()){
 				// TODO: don't actually move the object forward (this interferes with collision detection)
 				PointVector pv = integrator.integrate(this, f, time, deltaTime);
-				f.setVector(VectorMath.getVector(pv, f));
+				// XXX: I have no idea which this is supposed to be
+//				f.setVector(VectorMath.getVector(pv, f));
 				velocities[i] = pv.getVector();
 //				f.setPointVector(pv);
 				
@@ -161,17 +162,25 @@ public class PhysicsEngine implements Accelerator {
 			cr = checkforcecirclescollide(ForceCircles, StaticCircles, Lines);
 			if(cr.collidelist.size() > 0)
 				cr = checkforcecirclescollide(ForceCircles, StaticCircles, Lines, cr.collidetime, cr.modified, false);
+			
 			for(int i = Math.min(ForceCircles.size(), cr.modified.length) - 1; i >= 0; i--){
 				ForceCircle fc = ForceCircles.get(i);
 				if(!fc.isFrozen()){
 					if(!cr.modified[i]){ //unchanged, so move it forward
 						fc.setPoint(fc.getX2(), fc.getY2());
 						fc.setVector(velocities[i]);
+						
+						if(cr.collidetime[i] == 1) { //if it has not been moved forward (in the last collide() call) , move it forward
+							//the collide function moves collided forcecircles forward if they have collided in that session
+							fc.setPoint(fc.getX() + (1-cr.timepassed[i])*fc.getvx(), fc.getY() + (1-cr.timepassed[i])*fc.getvy());
+							//there may still be more of the vector to move forward but you haven't done the collision checking what's left
+						}
+					} else {
+						// XXX: this seems to solve a problem with circles sticking to lines
+						if(cr.collidetime[i] == 0) {
+							fc.setPoint(fc.getX2(), fc.getY2());
+						}
 					}
-					if(cr.collidetime[i] == 1) //if it has not been moved forward (in the last collide() call) , move it forward
-						//the collide function moves collided forcecircles forward if they have collided in that session
-						fc.setPoint(fc.getX() + (1-cr.timepassed[i])*fc.getvx(), fc.getY() + (1-cr.timepassed[i])*fc.getvy());
-						//there may still be more of the vector to move forward but you haven't done the collision checking what's left
 				}
 			}
 		}catch(Exception e){
