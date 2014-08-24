@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<jardesc>
+    <jar path="C:/Users/Eric/Documents/GitHub/ForceEngine/Force Engine Android/app/libs/forceengine.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/Force Engine/physics.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=Force Engine/src&lt;forceengine.math"/>
+        <javaElement handleIdentifier="=Force Engine/src&lt;forceengine.game"/>
+        <javaElement handleIdentifier="=Force Engine/src&lt;forceengine.physics"/>
+        <javaElement handleIdentifier="=Force Engine/src&lt;forceengine.physics.integrator"/>
+        <javaElement handleIdentifier="=Force Engine/src&lt;forceengine.objects"/>
+    </selectedElements>
+</jardesc>
