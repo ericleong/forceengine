@@ -10,7 +10,6 @@ import forceengine.VectorMath;
  * 
  * @author Eric
  */
-@SuppressWarnings("serial")
 public class Force extends PointVector implements Vector {
 	protected double length;
 	protected double mass;

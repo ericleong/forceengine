@@ -1,10 +1,5 @@
 package forceengine.objects;
 
-import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 
 /**
  * A <code>Force</code> that implements <code>Circle</code>.
@@ -12,7 +7,6 @@ import java.awt.geom.Rectangle2D;
  * @author Eric
  * 
  */
-@SuppressWarnings("serial")
 public class ForceCircle extends Force implements Circle {
 	protected double radius;
 	protected double radiussq; // probably won't dump but not all that useful to keep
@@ -120,63 +114,6 @@ public class ForceCircle extends Force implements Circle {
 			this.radius = radius;
 			this.radiussq = radius * radius;
 		}
-	}
-	@Override
-	public boolean contains(Point2D p) {
-		return p.distanceSq(this) <= radiussq;
-	}
-
-	@Override
-	public boolean contains(Rectangle2D r) {
-		return contains(new Point2D.Double(r.getMinX(), r.getMinY()))
-				&& contains(new Point2D.Double(r.getMinX(), r.getMaxY()))
-				&& contains(new Point2D.Double(r.getMaxX(), r.getMinY()))
-				&& contains(new Point2D.Double(r.getMaxX(), r.getMinY()));
-	}
-	@Override
-	public boolean contains(double x, double y) {
-		return this.distanceSq(x, y) <= radiussq;
-	}
-
-	@Override
-	public boolean contains(double x, double y, double w, double h) {
-		return contains(x, y) && contains(x, y + h) && contains(x + w, y)
-				&& contains(x + w, y + h);
-	}
-	@Override
-	public Rectangle getBounds() {
-		return new Rectangle((int)(x - radius), (int)(y - radius), (int)(2 * radius), (int)(2 * radius));
-	}
-	@Override
-	public Rectangle2D getBounds2D() {
-		return new Rectangle2D.Double(x - radius, y - radius, 2 * radius, 2 * radius);
-	}
-	@Override
-	public PathIterator getPathIterator(AffineTransform at) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public PathIterator getPathIterator(AffineTransform at, double flatness) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public boolean intersects(double x, double y, double w, double h) {
-		return (getX() >= x && getX() <= x + w && getY() >= y && getY() <= y
-				+ h)
-				|| contains(x, y)
-				|| contains(x, y + h)
-				|| contains(x + w, y)
-				|| contains(x + w, y + h);
-	}
-	@Override
-	public boolean intersects(Rectangle2D r) {
-		return (getX() >= r.getMinX() && getX() <= r.getMaxX() && getY() >= r.getMinY() && getY() <= r.getMaxY())
-				|| contains(r.getMinX(), r.getMinY())
-				|| contains(r.getMinX(), r.getMaxY())
-				|| contains(r.getMaxX(), r.getMinY())
-				|| contains(r.getMaxX(), r.getMaxY());
 	}
 	@Override
 	public double getMaxX() {

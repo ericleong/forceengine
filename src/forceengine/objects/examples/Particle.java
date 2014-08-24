@@ -14,7 +14,6 @@ import forceengine.objects.Vector;
  * @author Eric
  * 
  */
-@SuppressWarnings("serial")
 public class Particle extends ForceCircle implements Colored, Living {
 	protected Color color;
 	protected double age;

@@ -1,7 +1,5 @@
 package forceengine.objects;
 
-import java.awt.Shape;
-
 /**
  * A non rotating rectangle (though one can extend it and make it rotating)
  * 

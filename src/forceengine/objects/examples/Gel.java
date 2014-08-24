@@ -11,7 +11,6 @@ import forceengine.objects.PointVector;
 import forceengine.objects.RectVector;
 import forceengine.objects.Vector;
 
-@SuppressWarnings("serial")
 public class Gel extends ForceCircle implements Colored {
 	public static final Color color = new Color(26, 141, 240, 100);
 	

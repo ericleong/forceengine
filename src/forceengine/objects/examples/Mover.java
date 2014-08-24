@@ -10,7 +10,6 @@ import forceengine.objects.StaticCircle;
 import forceengine.objects.Vector;
 import forceengine.physics.PhysicsMath;
 
-@SuppressWarnings("serial")
 public class Mover extends StaticCircle implements Accelerator {
 	private boolean alive;
 	private int direction;

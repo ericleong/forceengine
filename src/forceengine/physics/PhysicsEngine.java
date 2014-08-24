@@ -4,7 +4,6 @@
  */
 package forceengine.physics;
 
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -1448,8 +1447,8 @@ public class PhysicsEngine implements Accelerator {
 					// (specialized collision checking code since you don't want to touch actual a/b values
 					// find midpoint and push out radius
 					double dist = (double)Point.distance(a.getX(), a.getY(), b.getX(), b.getY());
-					Rectangle2D aBoundBox = a.getBounds2D();
-					Rectangle2D bBoundBox = b.getBounds2D();
+					Rect aBoundBox = a.getBounds();
+					Rect bBoundBox = b.getBounds();
 					boolean abound = aBoundBox.getMinX() == lowerxbound || aBoundBox.getMaxX() == upperxbound
 							|| aBoundBox.getMinY() == lowerybound || aBoundBox.getMaxY() == upperybound;
 					boolean bbound = bBoundBox.getMinX() == lowerxbound || bBoundBox.getMaxX() == upperxbound

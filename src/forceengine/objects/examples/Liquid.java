@@ -16,7 +16,6 @@ import forceengine.objects.Vector;
  * @author Eric
  *
  */
-@SuppressWarnings("serial")
 public class Liquid extends ForceCircle implements Colored {
 	public static final Color color = new Color(26, 141, 240, 100);
 	

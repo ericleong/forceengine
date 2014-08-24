@@ -10,12 +10,8 @@
  */
 package forceengine.objects;
 
-import java.awt.Shape;
-import java.awt.geom.Line2D;
-
 /**
  * @author Eric
- * @see Line2D.Double
  */
 public interface Line extends Shape {
 

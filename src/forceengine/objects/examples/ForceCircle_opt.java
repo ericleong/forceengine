@@ -18,7 +18,6 @@ import forceengine.objects.Vector;
  * @author Eric
  * 
  */
-@SuppressWarnings("serial")
 public class ForceCircle_opt extends ForceCircle implements Freezable {
 	protected boolean alive = true;
 	protected boolean frozen;

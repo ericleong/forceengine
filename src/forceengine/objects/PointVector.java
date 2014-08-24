@@ -1,11 +1,5 @@
 package forceengine.objects;
 
-import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-
 import forceengine.VectorMath;
 
 /**
@@ -16,7 +10,6 @@ import forceengine.VectorMath;
  * @author Eric
  * @since Feb 28, 2008
  */
-@SuppressWarnings("serial")
 public class PointVector extends Point implements Vector, Line {
 	protected double vx = 0;
 	protected double vy = 0;
@@ -56,26 +49,6 @@ public class PointVector extends Point implements Vector, Line {
 		setRect(getvx() + v.getvx(), getvy() + v.getvy());
 		return this;
 	}
-	
-	@Override
-	public boolean contains(double x, double y) {
-		return false;
-	}
-
-	@Override
-	public boolean contains(double x, double y, double w, double h) {
-		return false;
-	}
-
-	@Override
-	public boolean contains(Point2D p) {
-		return false;
-	}
-
-	@Override
-	public boolean contains(Rectangle2D r) {
-		return false;
-	}
 
 	@Override
 	public double dot(Vector v) {
@@ -108,13 +81,8 @@ public class PointVector extends Point implements Vector, Line {
 	}
 
 	@Override
-	public Rectangle getBounds() {
-		return new Rectangle((int)Math.min(getX1(), getX2()), (int)Math.min(getY1(), getY2()), (int)Math.max(getX1(), getX2()), (int)Math.max(getY1(), getY2()));
-	}
-
-	@Override
-	public Rectangle2D getBounds2D() {
-		return new Rectangle2D.Double(Math.min(getX1(), getX2()), Math.min(getY1(), getY2()), Math.max(getX1(), getX2()), Math.max(getY1(), getY2()));
+	public Rect getBounds() {
+		return StaticRect.fromUpperLeft((int)Math.min(getX1(), getX2()), (int)Math.min(getY1(), getY2()), (int)Math.max(getX1(), getX2()), (int)Math.max(getY1(), getY2()));
 	}
 
 	@Override
@@ -130,18 +98,6 @@ public class PointVector extends Point implements Vector, Line {
 	@Override
 	public Point getP2() {
 		return new Point(getX2(), getY2());
-	}
-	
-	@Override
-	public PathIterator getPathIterator(AffineTransform at) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public PathIterator getPathIterator(AffineTransform at, double flatness) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -196,16 +152,6 @@ public class PointVector extends Point implements Vector, Line {
 		result = (int) (prime * result + java.lang.Double.doubleToLongBits(vx));
 		result = (int) (prime * result + java.lang.Double.doubleToLongBits(vy));
 		return result;
-	}
-
-	@Override
-	public boolean intersects(double x, double y, double w, double h) {
-		return getBounds2D().intersects(x, y, w, h);
-	}
-
-	@Override
-	public boolean intersects(Rectangle2D r) {
-		return r.intersects(getBounds2D());
 	}
 
 	/**

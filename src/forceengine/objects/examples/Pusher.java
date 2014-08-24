@@ -16,7 +16,6 @@ import forceengine.objects.RectVector;
 import forceengine.objects.StaticCircle;
 import forceengine.objects.Vector;
 
-@SuppressWarnings("serial")
 public class Pusher extends StaticCircle implements Accelerator, Painter {
 	public static final Color color = new Color(255, 125, 125);
 

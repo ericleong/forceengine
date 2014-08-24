@@ -1,20 +1,17 @@
 package forceengine.objects;
 
-import java.awt.geom.Point2D;
-
 
 /**
  * The basic class of PhysicsEngine -<br \>
- * A rectangular coordinate with X and Y values stored as doubles and in the form (x, y). Very similar to
- * <code>Point2D.Double</code>, the only exception being that the <code>getX()</code> and <code>getY()</code> methods in
- * <code>Point2D.Double</code> return values of type <code>double</code>, whereas in this class they return values of
- * type <code>double</code>.
+ * A rectangular coordinate with X and Y values stored as doubles and in the form (x, y).
  * 
  * @author Eric
  * @since Feb 28, 2008
  */
-@SuppressWarnings("serial")
-public class Point extends Point2D.Double {
+public class Point {
+	
+	protected double x, y;
+	
 	/**
 	 * Finds the midpoint between two points, in rectangular coordinates.
 	 * 
@@ -193,4 +190,110 @@ public class Point extends Point2D.Double {
 	public Point translate(Vector v){
 		return translate(v.getvx(), v.getvy());
 	}
+	
+	/**
+     * Returns the square of the distance between two points.
+     *
+     * @param x1 the X coordinate of the first specified point
+     * @param y1 the Y coordinate of the first specified point
+     * @param x2 the X coordinate of the second specified point
+     * @param y2 the Y coordinate of the second specified point
+     * @return the square of the distance between the two
+     * sets of specified coordinates.
+     * @since 1.2
+     */
+    public static double distanceSq(double x1, double y1,
+                                    double x2, double y2)
+    {
+        x1 -= x2;
+        y1 -= y2;
+        return (x1 * x1 + y1 * y1);
+    }
+
+    /**
+     * Returns the distance between two points.
+     *
+     * @param x1 the X coordinate of the first specified point
+     * @param y1 the Y coordinate of the first specified point
+     * @param x2 the X coordinate of the second specified point
+     * @param y2 the Y coordinate of the second specified point
+     * @return the distance between the two sets of specified
+     * coordinates.
+     * @since 1.2
+     */
+    public static double distance(double x1, double y1,
+                                  double x2, double y2)
+    {
+        x1 -= x2;
+        y1 -= y2;
+        return Math.sqrt(x1 * x1 + y1 * y1);
+    }
+
+    /**
+     * Returns the square of the distance from this
+     * <code>Point2D</code> to a specified point.
+     *
+     * @param px the X coordinate of the specified point to be measured
+     *           against this <code>Point2D</code>
+     * @param py the Y coordinate of the specified point to be measured
+     *           against this <code>Point2D</code>
+     * @return the square of the distance between this
+     * <code>Point2D</code> and the specified point.
+     * @since 1.2
+     */
+    public double distanceSq(double px, double py) {
+        px -= getX();
+        py -= getY();
+        return (px * px + py * py);
+    }
+
+    /**
+     * Returns the square of the distance from this
+     * <code>Point2D</code> to a specified <code>Point2D</code>.
+     *
+     * @param pt the specified point to be measured
+     *           against this <code>Point2D</code>
+     * @return the square of the distance between this
+     * <code>Point2D</code> to a specified <code>Point2D</code>.
+     * @since 1.2
+     */
+    public double distanceSq(Point pt) {
+        double px = pt.getX() - this.getX();
+        double py = pt.getY() - this.getY();
+        return (px * px + py * py);
+    }
+
+    /**
+     * Returns the distance from this <code>Point2D</code> to
+     * a specified point.
+     *
+     * @param px the X coordinate of the specified point to be measured
+     *           against this <code>Point2D</code>
+     * @param py the Y coordinate of the specified point to be measured
+     *           against this <code>Point2D</code>
+     * @return the distance between this <code>Point2D</code>
+     * and a specified point.
+     * @since 1.2
+     */
+    public double distance(double px, double py) {
+        px -= getX();
+        py -= getY();
+        return Math.sqrt(px * px + py * py);
+    }
+
+    /**
+     * Returns the distance from this <code>Point2D</code> to a
+     * specified <code>Point2D</code>.
+     *
+     * @param pt the specified point to be measured
+     *           against this <code>Point2D</code>
+     * @return the distance between this <code>Point2D</code> and
+     * the specified <code>Point2D</code>.
+     * @since 1.2
+     */
+    public double distance(Point pt) {
+        double px = pt.getX() - this.getX();
+        double py = pt.getY() - this.getY();
+        return Math.sqrt(px * px + py * py);
+    }
 }

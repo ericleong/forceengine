@@ -17,7 +17,6 @@ import forceengine.objects.StaticCircle;
  * 
  * @author Eric
  */
-@SuppressWarnings("serial")
 public class ForceCircle_opt_color extends ForceCircle_opt implements Colored {
 	private Color color;
 
