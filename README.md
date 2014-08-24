@@ -13,3 +13,12 @@ demo
 ----
 
 The easiest way to get the demo running is by opening the project with [Eclipse](https://www.eclipse.org/) and running `ForceEngineDemo`.
+
+features
+--------
+- circle-circle collision
+- circle-line collision
+- circle-circle field interactions
+- triggers
+- explosions
+- fluids that interact with rigid bodies
