@@ -20,6 +20,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
 
+import com.eric.forceengine.objects.ColoredForceCircle;
+
 import forceengine.objects.Force;
 import forceengine.objects.ForceCircle;
 import forceengine.objects.PointVector;
@@ -110,10 +112,10 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 			if (canvas != null) {
 				Paint paint = new Paint();
 
-				paint.setColor(Color.WHITE);
+				paint.setColor(Color.argb(128, 255, 255, 255));
 				canvas.drawRect(0, 0, mForceSurface.getMeasuredWidth(), mForceSurface.getMeasuredHeight(), paint);
 
-				paint.setColor(Color.BLUE);
+				paint.setColor(Color.GRAY);
 
 				for (StaticCircle sc : mEngine.getStaticCircles()) {
 					canvas.drawCircle((float) sc.getX(), (float) sc.getY(), (float) sc.getRadius(), paint);
@@ -122,6 +124,11 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 					canvas.drawLine((float) l.getX1(), (float) l.getY1(), (float) l.getY1(), (float) l.getY2(), paint);
 				}
 				for (ForceCircle fc : mEngine.getForceCircles()) {
+					if (fc instanceof ColoredForceCircle) {
+						paint.setColor(((ColoredForceCircle) fc).getColor());
+					} else {
+						paint.setColor(Color.GRAY);
+					}
 					canvas.drawCircle((float) fc.getX(), (float) fc.getY(), (float) fc.getRadius(), paint);
 				}
 
@@ -150,11 +157,67 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 		return super.onOptionsItemSelected(item);
 	}
 
+	/**
+	 * @return a random color from the set of colors.
+	 */
+	private int randomColor() {
+		int newColor;
+		boolean redo = false;
+
+		do {
+			redo = false;
+			switch ((int) Math.round(Math.random() * 10) % 10) {
+				case 0:
+					newColor = Color.rgb(234, 253, 0);
+					break;
+				case 1:
+					newColor = Color.rgb(76, 233, 0);
+					break;
+				case 2:
+					newColor = Color.rgb(244, 0, 48);
+					break;
+				case 3:
+					newColor = Color.rgb(152, 5, 200);
+					break;
+				case 4:
+					newColor = Color.rgb(255, 113, 0);
+					break;
+				case 5:
+					newColor = Color.rgb(255, 173, 0);
+					break;
+				case 6:
+					newColor = Color.rgb(14, 64, 201);
+					break;
+				case 7:
+					newColor = Color.rgb(20, 225, 160);
+					break;
+				case 8:
+					newColor = Color.rgb(228, 0, 108);
+					break;
+				default:
+					newColor = Color.rgb(0, 191, 255);
+					break;
+			}
+
+			if (mEngine.getForceCircles().size() > 1){
+				ForceCircle fc = mEngine.getForceCircle(mEngine.getForceCircles().size() - 1);
+				if (fc instanceof ColoredForceCircle){
+					ColoredForceCircle c = (ColoredForceCircle) fc;
+					if (c.getColor() == newColor){
+						redo = true;
+					}
+				}
+			}
+		} while (redo);
+
+		return newColor;
+	}
+
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN:
-				mEngine.addForceCircle(new ForceCircle(event.getX(), event.getY(), 0, 0, RADIUS, MASS, RESTITUTION));
+				mEngine.addForceCircle(new ColoredForceCircle(event.getX(), event.getY(), 0, 0, RADIUS, MASS, RESTITUTION, randomColor()));
 				break;
 		}
 
