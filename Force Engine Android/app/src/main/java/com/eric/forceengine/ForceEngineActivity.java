@@ -41,11 +41,11 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 	private static final String TAG = ForceEngineActivity.class.getSimpleName();
 
 	private static final long FRAME_DURATION = 16;
-	private static final float RADIUS = UiUtils.getPxFromDp(40);
+	private static final float RADIUS = UiUtils.getPxFromDp(36);
 	private static final float MASS = 100;
 	private static final double RESTITUTION = 0.9;
 
-	private static final double DRAG_SPRING_CONSTANT = 1.0 / 10.0;
+	private static final double DRAG_SPRING_CONSTANT = 1.0 / 5.0;
 	private static final double DRAG_FRICTION = 1.0;
 	private static final long DRAG_MIN_TIME = 200; // ms
 	private static final double SELECT_SLOP = UiUtils.getPxFromDp(10);
