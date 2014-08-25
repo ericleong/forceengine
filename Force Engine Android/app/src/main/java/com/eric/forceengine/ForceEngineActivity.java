@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -21,6 +22,9 @@ import android.view.SurfaceHolder;
 import android.view.View;
 
 import com.eric.forceengine.objects.ColoredForceCircle;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import forceengine.objects.Force;
 import forceengine.objects.ForceCircle;
@@ -41,12 +45,19 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 	private static final float MASS = 100;
 	private static final double RESTITUTION = 0.9;
 
+	private static final double DRAG_SPRING_CONSTANT = 1.0 / 10.0;
+	private static final double DRAG_FRICTION = 1.0;
+	private static final long DRAG_MIN_TIME = 200; // ms
+	private static final double SELECT_SLOP = UiUtils.getPxFromDp(10);
+
 	private PhysicsEngine mEngine;
 	private ForceSurfaceView mForceSurface;
 	private Vector mGravity;
 
 	private SensorManager mSensorManager;
 	private Sensor mSensor;
+
+	private Map<Integer, Pair<PointVector, forceengine.objects.Point>> mDragging = new HashMap<Integer, Pair<PointVector, forceengine.objects.Point>>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +78,14 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 			@Override
 			public Vector accelerate(Force f, PointVector pv, double t) {
 				Vector v = super.accelerate(f, pv, t);
+
+				for (Pair<PointVector, forceengine.objects.Point> drag : mDragging.values()) {
+					if (f == drag.first && drag.second != null) {
+						v.add(new RectVector(
+								(drag.second.getX() - f.getX()) * DRAG_SPRING_CONSTANT - f.getvx() * DRAG_FRICTION,
+								(drag.second.getY() - f.getY()) * DRAG_SPRING_CONSTANT - f.getvy() * DRAG_FRICTION));
+					}
+				}
 
 				return v.add(mGravity);
 			}
@@ -213,11 +232,84 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 		return newColor;
 	}
 
+	public PointVector isInsideCircle(float x, float y) {
+		double minDistSq = -1;
+		double distSq;
+		PointVector point = null;
+
+		for (ForceCircle forceCircle : mEngine.getForceCircles()) {
+			distSq = forceengine.objects.Point.distanceSq(x, y, forceCircle.getX(), forceCircle.getY());
+			if (distSq < Math.pow(RADIUS + SELECT_SLOP, 2)
+					&& (minDistSq == -1 || distSq <= minDistSq)) {
+				point = forceCircle;
+				minDistSq = distSq;
+			}
+		}
+
+		return point;
+	}
+
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
-		switch (event.getAction()) {
+		final int action = event.getAction();
+
+		switch (action & MotionEvent.ACTION_MASK) {
+			case MotionEvent.ACTION_POINTER_DOWN:
 			case MotionEvent.ACTION_DOWN:
-				mEngine.addForceCircle(new ColoredForceCircle(event.getX(), event.getY(), 0, 0, RADIUS, MASS, RESTITUTION, randomColor()));
+				for (int i = 0; i < event.getPointerCount(); i++) {
+					int id = event.getPointerId(i);
+
+					if (!mDragging.containsKey(id)) {
+						PointVector touching = isInsideCircle(event.getX(i), event.getY(i));
+
+						if (touching != null) {
+							mDragging.put(id, new Pair<PointVector, forceengine.objects.Point>(
+									touching,
+									new forceengine.objects.Point(event.getX(i), event.getY(i))
+							));
+						}
+					}
+				}
+
+				break;
+
+			case MotionEvent.ACTION_MOVE:
+
+				for (int i = 0; i < event.getPointerCount(); i++) {
+					int id = event.getPointerId(i);
+
+					if (mDragging.containsKey(id)) {
+						Pair<PointVector, forceengine.objects.Point> dragging = mDragging.get(id);
+
+						if (dragging.first != null && dragging.second != null) {
+							dragging.second.setX(event.getX(i));
+							dragging.second.setY(event.getY(i));
+						}
+					}
+				}
+
+				break;
+
+			case MotionEvent.ACTION_UP:
+
+				if (mDragging.size() == 0 && event.getEventTime() - event.getDownTime() < DRAG_MIN_TIME) {
+					mEngine.addForceCircle(new ColoredForceCircle(event.getX(), event.getY(), 0, 0, RADIUS, MASS, RESTITUTION, randomColor()));
+				}
+
+			case MotionEvent.ACTION_POINTER_UP:
+			case MotionEvent.ACTION_CANCEL:
+
+				// Extract the index of the pointer that left the touch sensor
+				final int pointerIndex = (action & MotionEvent.ACTION_POINTER_INDEX_MASK)
+						>> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+
+				int id = event.getPointerId(pointerIndex);
+
+				if (mDragging.containsKey(id)) {
+					mDragging.remove(id);
+					break;
+				}
+
 				break;
 		}
 
