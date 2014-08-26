@@ -40,7 +40,7 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 
 	private static final String TAG = ForceEngineActivity.class.getSimpleName();
 
-	private static final long FRAME_DURATION = 16;
+	private static final long FRAME_DURATION = 16; // ms
 	private static final float RADIUS = UiUtils.getPxFromDp(36);
 	private static final float MASS = 100;
 	private static final double RESTITUTION = 0.9;
@@ -267,6 +267,11 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 									touching,
 									new forceengine.objects.Point(event.getX(i), event.getY(i))
 							));
+						} else {
+							mDragging.put(id, new Pair<PointVector, forceengine.objects.Point>(
+									null,
+									new forceengine.objects.Point(event.getX(i), event.getY(i))
+							));
 						}
 					}
 				}
@@ -291,11 +296,6 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 				break;
 
 			case MotionEvent.ACTION_UP:
-
-				if (mDragging.size() == 0 && event.getEventTime() - event.getDownTime() < DRAG_MIN_TIME) {
-					mEngine.addForceCircle(new ColoredForceCircle(event.getX(), event.getY(), 0, 0, RADIUS, MASS, RESTITUTION, randomColor()));
-				}
-
 			case MotionEvent.ACTION_POINTER_UP:
 			case MotionEvent.ACTION_CANCEL:
 
@@ -306,6 +306,20 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 				int id = event.getPointerId(pointerIndex);
 
 				if (mDragging.containsKey(id)) {
+
+					Pair<PointVector, forceengine.objects.Point> dragging = mDragging.get(id);
+
+					if (dragging.first == null && dragging.second != null &&
+							event.getEventTime() - event.getDownTime() < DRAG_MIN_TIME) {
+						long time = event.getEventTime() - event.getDownTime();
+
+						mEngine.addForceCircle(new ColoredForceCircle(
+								event.getX(pointerIndex), event.getY(pointerIndex),
+								(event.getX(pointerIndex) - dragging.second.getX()) / time * FRAME_DURATION,
+								(event.getY(pointerIndex) - dragging.second.getY()) / time * FRAME_DURATION,
+								RADIUS, MASS, RESTITUTION, randomColor()));
+					}
+
 					mDragging.remove(id);
 					break;
 				}
