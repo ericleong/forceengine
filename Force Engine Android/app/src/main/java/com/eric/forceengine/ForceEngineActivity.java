@@ -176,62 +176,6 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 		return super.onOptionsItemSelected(item);
 	}
 
-	/**
-	 * @return a random color from the set of colors.
-	 */
-	private int randomColor() {
-		int newColor;
-		boolean redo = false;
-
-		do {
-			redo = false;
-			switch ((int) Math.round(Math.random() * 10) % 10) {
-				case 0:
-					newColor = Color.rgb(234, 253, 0);
-					break;
-				case 1:
-					newColor = Color.rgb(76, 233, 0);
-					break;
-				case 2:
-					newColor = Color.rgb(244, 0, 48);
-					break;
-				case 3:
-					newColor = Color.rgb(152, 5, 200);
-					break;
-				case 4:
-					newColor = Color.rgb(255, 113, 0);
-					break;
-				case 5:
-					newColor = Color.rgb(255, 173, 0);
-					break;
-				case 6:
-					newColor = Color.rgb(14, 64, 201);
-					break;
-				case 7:
-					newColor = Color.rgb(20, 225, 160);
-					break;
-				case 8:
-					newColor = Color.rgb(228, 0, 108);
-					break;
-				default:
-					newColor = Color.rgb(0, 191, 255);
-					break;
-			}
-
-			if (mEngine.getForceCircles().size() > 1){
-				ForceCircle fc = mEngine.getForceCircle(mEngine.getForceCircles().size() - 1);
-				if (fc instanceof ColoredForceCircle){
-					ColoredForceCircle c = (ColoredForceCircle) fc;
-					if (c.getColor() == newColor){
-						redo = true;
-					}
-				}
-			}
-		} while (redo);
-
-		return newColor;
-	}
-
 	public PointVector isInsideCircle(float x, float y) {
 		double minDistSq = -1;
 		double distSq;
@@ -317,7 +261,7 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 								event.getX(pointerIndex), event.getY(pointerIndex),
 								(event.getX(pointerIndex) - dragging.second.getX()) / time * FRAME_DURATION,
 								(event.getY(pointerIndex) - dragging.second.getY()) / time * FRAME_DURATION,
-								RADIUS, MASS, RESTITUTION, randomColor()));
+								RADIUS, MASS, RESTITUTION, UiUtils.randomColor(mEngine)));
 					}
 
 					mDragging.remove(id);
