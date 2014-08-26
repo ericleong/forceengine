@@ -1,12 +1,10 @@
 package com.eric.forceengine.objects;
 
-import android.graphics.Color;
-
 import forceengine.objects.ForceCircle;
 
 /**
  * A {@link forceengine.objects.ForceCircle} with {@link android.graphics.Color}.
- *
+ * <p/>
  * Created by Eric on 8/24/2014.
  */
 public class ColoredForceCircle extends ForceCircle {

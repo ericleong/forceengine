@@ -40,7 +40,7 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 
 	private static final String TAG = ForceEngineActivity.class.getSimpleName();
 
-	private static final long FRAME_DURATION = 16; // ms
+	public static final long FRAME_DURATION = 16; // ms
 	private static final float RADIUS = UiUtils.getPxFromDp(36);
 	private static final float MASS = 100;
 	private static final double RESTITUTION = 0.9;
@@ -49,6 +49,8 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 	private static final double DRAG_FRICTION = 1.0;
 	private static final long DRAG_MIN_TIME = 200; // ms
 	private static final double SELECT_SLOP = UiUtils.getPxFromDp(10);
+
+	private RenderThread mRenderThread;
 
 	private PhysicsEngine mEngine;
 	private ForceSurfaceView mForceSurface;
@@ -98,62 +100,8 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 			mForceSurface.setEngine(mEngine);
 		}
 
-		final Handler handler = new Handler();
-
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				long start = SystemClock.uptimeMillis();
-
-				try {
-					mEngine.components();
-
-					if (mForceSurface != null) {
-						render();
-					}
-				} catch (Exception e) {
-					Log.e(TAG, "Error on main thread.", e);
-				} finally {
-					handler.postDelayed(this, Math.max(FRAME_DURATION - SystemClock.uptimeMillis() - start, 0));
-				}
-			}
-		};
-
-		runnable.run();
-	}
-
-	private void render() {
-		if (mForceSurface != null && mForceSurface.getHolder() != null) {
-			SurfaceHolder holder = mForceSurface.getHolder();
-
-			Canvas canvas = holder.lockCanvas();
-
-			if (canvas != null) {
-				Paint paint = new Paint();
-
-				paint.setColor(Color.argb(128, 255, 255, 255));
-				canvas.drawRect(0, 0, mForceSurface.getMeasuredWidth(), mForceSurface.getMeasuredHeight(), paint);
-
-				paint.setColor(Color.GRAY);
-
-				for (StaticCircle sc : mEngine.getStaticCircles()) {
-					canvas.drawCircle((float) sc.getX(), (float) sc.getY(), (float) sc.getRadius(), paint);
-				}
-				for (StaticLine l : mEngine.getLines()) {
-					canvas.drawLine((float) l.getX1(), (float) l.getY1(), (float) l.getY1(), (float) l.getY2(), paint);
-				}
-				for (ForceCircle fc : mEngine.getForceCircles()) {
-					if (fc instanceof ColoredForceCircle) {
-						paint.setColor(((ColoredForceCircle) fc).getColor());
-					} else {
-						paint.setColor(Color.GRAY);
-					}
-					canvas.drawCircle((float) fc.getX(), (float) fc.getY(), (float) fc.getRadius(), paint);
-				}
-
-				holder.unlockCanvasAndPost(canvas);
-			}
-		}
+		mRenderThread = new RenderThread(mEngine, mForceSurface, new Handler());
+		mRenderThread.run();
 	}
 
 	@Override

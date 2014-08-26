@@ -1,16 +1,10 @@
 package com.eric.forceengine;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import forceengine.objects.ForceCircle;
-import forceengine.objects.StaticCircle;
-import forceengine.objects.StaticLine;
 import forceengine.physics.PhysicsEngine;
 
 /**
