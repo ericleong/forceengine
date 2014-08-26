@@ -4,6 +4,7 @@
 	<item
 		android:id="@+id/action_clear"
 		android:orderInCategory="100"
-		android:showAsAction="never"
+		android:showAsAction="always"
+		android:icon="@drawable/ic_action_discard"
 		android:title="@string/action_clear"/>
 </menu>
