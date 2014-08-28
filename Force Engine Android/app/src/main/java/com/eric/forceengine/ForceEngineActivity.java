@@ -1,10 +1,10 @@
 package com.eric.forceengine;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -12,13 +12,10 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
 import android.view.View;
 
 import com.eric.forceengine.objects.ColoredForceCircle;
@@ -30,20 +27,20 @@ import forceengine.objects.Force;
 import forceengine.objects.ForceCircle;
 import forceengine.objects.PointVector;
 import forceengine.objects.RectVector;
-import forceengine.objects.StaticCircle;
-import forceengine.objects.StaticLine;
 import forceengine.objects.Vector;
 import forceengine.physics.PhysicsEngine;
 
 
-public class ForceEngineActivity extends Activity implements View.OnTouchListener, SensorEventListener {
+public class ForceEngineActivity extends Activity implements View.OnTouchListener,
+		SensorEventListener, SettingsFragment.OnFragmentInteractionListener {
 
 	private static final String TAG = ForceEngineActivity.class.getSimpleName();
 
 	public static final long FRAME_DURATION = 16; // ms
 	private static final float RADIUS = UiUtils.getPxFromDp(36);
 	private static final float MASS = 100;
-	private static final double RESTITUTION = 0.9;
+	private static final float DEFAULT_RESTITUTION = 0.9f;
+	private static final float DEFAULT_FRICTION = 0.1f;
 
 	private static final double DRAG_SPRING_CONSTANT = 1.0 / 5.0;
 	private static final double DRAG_FRICTION = 1.0;
@@ -60,6 +57,9 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 	private Sensor mSensor;
 
 	private Map<Integer, Pair<PointVector, forceengine.objects.Point>> mDragging = new HashMap<Integer, Pair<PointVector, forceengine.objects.Point>>();
+
+	private float mRestitution = DEFAULT_RESTITUTION;
+	private float mFriction = DEFAULT_FRICTION;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +88,8 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 								(drag.second.getY() - f.getY()) * DRAG_SPRING_CONSTANT - f.getvy() * DRAG_FRICTION));
 					}
 				}
+
+				v.add(new RectVector(-mFriction * pv.getvx(), -mFriction * pv.getvy()));
 
 				return v.add(mGravity);
 			}
@@ -120,6 +122,26 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 		if (id == R.id.action_clear) {
 			mEngine.clear();
 			return true;
+		} else if (id == R.id.action_settings) {
+			FragmentManager fragmentManager = getFragmentManager();
+
+			if (fragmentManager.findFragmentById(R.id.overlay) == null) {
+				FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+				Fragment fragment = SettingsFragment.newInstance(mRestitution, mFriction);
+
+				View overlay = findViewById(R.id.overlay);
+
+				if (fragment != null && overlay != null) {
+					overlay.setVisibility(View.VISIBLE);
+
+					fragmentTransaction.add(R.id.overlay, fragment);
+					fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+					fragmentTransaction.addToBackStack(null);
+					fragmentTransaction.commit();
+				}
+			} else {
+				onBackPressed();
+			}
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -209,7 +231,7 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 								event.getX(pointerIndex), event.getY(pointerIndex),
 								(event.getX(pointerIndex) - dragging.second.getX()) / time * FRAME_DURATION,
 								(event.getY(pointerIndex) - dragging.second.getY()) / time * FRAME_DURATION,
-								RADIUS, MASS, RESTITUTION, UiUtils.randomColor(mEngine)));
+								RADIUS, MASS, DEFAULT_RESTITUTION, UiUtils.randomColor(mEngine)));
 					}
 
 					mDragging.remove(id);
@@ -244,5 +266,19 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 			mGravity.setvx(-event.values[0]);
 			mGravity.setvy(event.values[1]);
 		}
+	}
+
+	@Override
+	public void onRestitutionChanged(float restitution) {
+		mRestitution = restitution;
+
+		for (ForceCircle forceCircle : mEngine.getForceCircles()) {
+			forceCircle.setRestitution(restitution);
+		}
+	}
+
+	@Override
+	public void onFrictionChanged(float friction) {
+		mFriction = friction;
 	}
 }
