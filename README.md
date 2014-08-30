@@ -5,9 +5,9 @@ Force Engine 2
 
 [Force Engine 2](http://ericleong.me/games/force-engine) is an [old](https://sites.google.com/site/t3hprogrammer/software/forceengine/history) physics engine with some game engine components written in Java. It is primarily a learning and research project focused on testing ideas around collision detection and response.
 
-Tutorials and research papers are available for the [circle-circle collision](http://ericleong.me/research/circle-circle) and [circle-line collision](http://ericleong.me/research/circle-line) detection and response.
+There are also tutorials, presentations, and research papers explaining the [circle-circle](http://ericleong.me/research/circle-circle) and [circle-line](http://ericleong.me/research/circle-line) collision detection and response algorithms.
 
-`Force Engine` only depends on Java 6. `Force Engine Android` requires the Android SDK.
+`Force Engine` depends on Java 6. `Force Engine Android` requires the Android SDK.
 
 demo
 ----
