@@ -17,6 +17,9 @@ import forceengine.objects.StaticLine;
 import forceengine.physics.PhysicsEngine;
 
 /**
+ * Renders the objects in the {@link forceengine.physics.PhysicsEngine} onto a
+ * {@link android.view.SurfaceView}.
+ *
  * Created by Eric on 8/25/2014.
  */
 public class RenderThread implements Runnable {

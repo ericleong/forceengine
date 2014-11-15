@@ -16,6 +16,8 @@ import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 
 import com.eric.forceengine.objects.ColoredForceCircle;
@@ -50,7 +52,7 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 	private RenderThread mRenderThread;
 
 	private PhysicsEngine mEngine;
-	private ForceSurfaceView mForceSurface;
+	private SurfaceView mForceSurface;
 	private Vector mGravity;
 
 	private SensorManager mSensorManager;
@@ -94,12 +96,28 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 				return v.add(mGravity);
 			}
 		};
-		mForceSurface = (ForceSurfaceView) findViewById(R.id.surface);
 
-		mForceSurface.setOnTouchListener(this);
-
+		mForceSurface = (SurfaceView) findViewById(R.id.surface);
 		if (mForceSurface != null) {
-			mForceSurface.setEngine(mEngine);
+			mForceSurface.setOnTouchListener(this);
+			mForceSurface.getHolder().addCallback(new SurfaceHolder.Callback() {
+				@Override
+				public void surfaceCreated(SurfaceHolder holder) {
+
+				}
+
+				@Override
+				public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+					if (mEngine != null) {
+						mEngine.setBounds(width, height);
+					}
+				}
+
+				@Override
+				public void surfaceDestroyed(SurfaceHolder holder) {
+
+				}
+			});
 		}
 
 		mRenderThread = new RenderThread(mEngine, mForceSurface, new Handler());
