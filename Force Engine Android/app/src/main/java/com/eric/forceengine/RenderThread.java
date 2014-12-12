@@ -30,10 +30,15 @@ public class RenderThread implements Runnable {
 	private SurfaceView mSurface;
 	private Handler mHandler;
 
+	private Paint mPaint;
+
 	public RenderThread(PhysicsEngine engine, SurfaceView surfaceView, Handler handler) {
 		mEngine = engine;
 		mSurface = surfaceView;
 		mHandler = handler;
+
+		mPaint = new Paint();
+		mPaint.setAntiAlias(true);
 	}
 
 	@Override
@@ -75,26 +80,25 @@ public class RenderThread implements Runnable {
 
 	private void renderCanvas(Canvas canvas) {
 		if (canvas != null) {
-			Paint paint = new Paint();
+			mPaint.setColor(Color.argb(128, 255, 255, 255));
+			canvas.drawRect(0, 0, mSurface.getMeasuredWidth(), mSurface.getMeasuredHeight(), mPaint);
 
-			paint.setColor(Color.argb(128, 255, 255, 255));
-			canvas.drawRect(0, 0, mSurface.getMeasuredWidth(), mSurface.getMeasuredHeight(), paint);
-
-			paint.setColor(Color.GRAY);
+			mPaint.setColor(Color.GRAY);
+			mPaint.setAntiAlias(true);
 
 			for (StaticCircle sc : mEngine.getStaticCircles()) {
-				canvas.drawCircle((float) sc.getX(), (float) sc.getY(), (float) sc.getRadius(), paint);
+				canvas.drawCircle((float) sc.getX(), (float) sc.getY(), (float) sc.getRadius(), mPaint);
 			}
 			for (StaticLine l : mEngine.getLines()) {
-				canvas.drawLine((float) l.getX1(), (float) l.getY1(), (float) l.getY1(), (float) l.getY2(), paint);
+				canvas.drawLine((float) l.getX1(), (float) l.getY1(), (float) l.getY1(), (float) l.getY2(), mPaint);
 			}
 			for (ForceCircle fc : mEngine.getForceCircles()) {
 				if (fc instanceof ColoredForceCircle) {
-					paint.setColor(((ColoredForceCircle) fc).getColor());
+					mPaint.setColor(((ColoredForceCircle) fc).getColor());
 				} else {
-					paint.setColor(Color.GRAY);
+					mPaint.setColor(Color.GRAY);
 				}
-				canvas.drawCircle((float) fc.getX(), (float) fc.getY(), (float) fc.getRadius(), paint);
+				canvas.drawCircle((float) fc.getX(), (float) fc.getY(), (float) fc.getRadius(), mPaint);
 			}
 		}
 	}
