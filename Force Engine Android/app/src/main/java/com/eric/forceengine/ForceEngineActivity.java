@@ -13,6 +13,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Pair;
+import android.view.Choreographer;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -272,12 +273,18 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 	protected void onResume() {
 		super.onResume();
 		mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+		// If we already have a Surface, we just need to resume the frame notifications.
+		if (mRenderThread != null) {
+			Choreographer.getInstance().postFrameCallback(mRenderThread);
+		}
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 		mSensorManager.unregisterListener(this);
+		Choreographer.getInstance().removeFrameCallback(mRenderThread);
 	}
 
 	@Override

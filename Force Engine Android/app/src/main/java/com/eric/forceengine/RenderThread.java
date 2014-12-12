@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.Choreographer;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -22,7 +23,7 @@ import forceengine.physics.PhysicsEngine;
  *
  * Created by Eric on 8/25/2014.
  */
-public class RenderThread implements Runnable {
+public class RenderThread implements Runnable, Choreographer.FrameCallback {
 
 	private static final String TAG = RenderThread.class.getSimpleName();
 
@@ -47,14 +48,12 @@ public class RenderThread implements Runnable {
 
 		try {
 			mEngine.components();
-
-			render();
 		} catch (Exception e) {
 			Log.e(TAG, "Error on main thread.", e);
 		} finally {
 			if (mHandler != null) {
 				mHandler.postDelayed(this,
-						Math.max(ForceEngineActivity.FRAME_DURATION - SystemClock.uptimeMillis() - start, 0));
+						Math.max(ForceEngineActivity.FRAME_DURATION - (SystemClock.uptimeMillis() - start), 0));
 			}
 		}
 	}
@@ -84,7 +83,6 @@ public class RenderThread implements Runnable {
 			canvas.drawRect(0, 0, mSurface.getMeasuredWidth(), mSurface.getMeasuredHeight(), mPaint);
 
 			mPaint.setColor(Color.GRAY);
-			mPaint.setAntiAlias(true);
 
 			for (StaticCircle sc : mEngine.getStaticCircles()) {
 				canvas.drawCircle((float) sc.getX(), (float) sc.getY(), (float) sc.getRadius(), mPaint);
@@ -101,5 +99,12 @@ public class RenderThread implements Runnable {
 				canvas.drawCircle((float) fc.getX(), (float) fc.getY(), (float) fc.getRadius(), mPaint);
 			}
 		}
+	}
+
+	@Override
+	public void doFrame(long frameTimeNanos) {
+		render();
+
+		Choreographer.getInstance().postFrameCallback(this);
 	}
 }
