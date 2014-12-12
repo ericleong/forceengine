@@ -34,15 +34,16 @@ import forceengine.physics.PhysicsEngine;
 
 
 public class ForceEngineActivity extends Activity implements View.OnTouchListener,
-		SensorEventListener, SettingsFragment.OnFragmentInteractionListener {
+		SensorEventListener, SettingsFragment.OnSettingsInteractionListener {
 
 	private static final String TAG = ForceEngineActivity.class.getSimpleName();
 
 	public static final long FRAME_DURATION = 16; // ms
 	private static final float RADIUS = UiUtils.getPxFromDp(36);
 	private static final float MASS = 100;
-	private static final float DEFAULT_RESTITUTION = 0.9f;
-	private static final float DEFAULT_FRICTION = 0.1f;
+	public static final float DEFAULT_RESTITUTION = 0.9f;
+	public static final float DEFAULT_FRICTION = 0.1f;
+	public static final boolean DEFAULT_GRAVITY_ENABLED = true;
 
 	private static final double DRAG_SPRING_CONSTANT = 1.0 / 5.0;
 	private static final double DRAG_FRICTION = 1.0;
@@ -60,6 +61,7 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 
 	private Map<Integer, Pair<PointVector, forceengine.objects.Point>> mDragging = new HashMap<Integer, Pair<PointVector, forceengine.objects.Point>>();
 
+	private boolean mGravityEnabled = DEFAULT_GRAVITY_ENABLED;
 	private float mRestitution = DEFAULT_RESTITUTION;
 	private float mFriction = DEFAULT_FRICTION;
 
@@ -93,7 +95,11 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 
 				v.add(new RectVector(-mFriction * pv.getvx(), -mFriction * pv.getvy()));
 
-				return v.add(mGravity);
+				if (mGravityEnabled) {
+					v.add(mGravity);
+				}
+
+				return v;
 			}
 		};
 
@@ -145,7 +151,7 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 
 			if (fragmentManager.findFragmentById(R.id.overlay) == null) {
 				FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-				Fragment fragment = SettingsFragment.newInstance(mRestitution, mFriction);
+				Fragment fragment = SettingsFragment.newInstance(mRestitution, mFriction, mGravityEnabled);
 
 				View overlay = findViewById(R.id.overlay);
 
@@ -298,5 +304,10 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 	@Override
 	public void onFrictionChanged(float friction) {
 		mFriction = friction;
+	}
+
+	@Override
+	public void onGravityEnabledChanged(boolean gravityEnabled) {
+		mGravityEnabled = gravityEnabled;
 	}
 }
