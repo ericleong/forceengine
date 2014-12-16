@@ -49,7 +49,7 @@ public class SettingsFragment extends Fragment {
 		Bundle args = new Bundle();
 		args.putFloat(ARG_RESTITUTION, restitution);
 		args.putFloat(ARG_FRICTION, friction);
-		args.putFloat(ARG_GRAVITY, friction);
+		args.putBoolean(ARG_GRAVITY, gravityEnabled);
 		fragment.setArguments(args);
 		return fragment;
 	}

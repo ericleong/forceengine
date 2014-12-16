@@ -39,7 +39,7 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 
 	private static final String TAG = ForceEngineActivity.class.getSimpleName();
 
-	public static final long FRAME_DURATION = 16; // ms
+	public static final long FRAME_DURATION = 16666667; // ns
 	private static final float RADIUS = UiUtils.getPxFromDp(36);
 	private static final float MASS = 100;
 	public static final float DEFAULT_RESTITUTION = 0.9f;
@@ -250,12 +250,8 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 
 					if (dragging.first == null && dragging.second != null &&
 							event.getEventTime() - event.getDownTime() < DRAG_MIN_TIME) {
-						long time = event.getEventTime() - event.getDownTime();
-
 						mEngine.addForceCircle(new ColoredForceCircle(
-								event.getX(pointerIndex), event.getY(pointerIndex),
-								(event.getX(pointerIndex) - dragging.second.getX()) / time * FRAME_DURATION,
-								(event.getY(pointerIndex) - dragging.second.getY()) / time * FRAME_DURATION,
+								event.getX(pointerIndex), event.getY(pointerIndex), 0, 0,
 								RADIUS, MASS, DEFAULT_RESTITUTION, UiUtils.randomColor(mEngine)));
 					}
 
@@ -276,6 +272,7 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 
 		// If we already have a Surface, we just need to resume the frame notifications.
 		if (mRenderThread != null) {
+			mRenderThread.clearNext();
 			Choreographer.getInstance().postFrameCallback(mRenderThread);
 		}
 	}

@@ -33,6 +33,8 @@ public class RenderThread implements Runnable, Choreographer.FrameCallback {
 
 	private Paint mPaint;
 
+	private boolean mClear;
+
 	public RenderThread(PhysicsEngine engine, SurfaceView surfaceView, Handler handler) {
 		mEngine = engine;
 		mSurface = surfaceView;
@@ -44,17 +46,10 @@ public class RenderThread implements Runnable, Choreographer.FrameCallback {
 
 	@Override
 	public void run() {
-		long start = SystemClock.uptimeMillis();
-
 		try {
 			mEngine.components();
 		} catch (Exception e) {
 			Log.e(TAG, "Error on main thread.", e);
-		} finally {
-			if (mHandler != null) {
-				mHandler.postDelayed(this,
-						Math.max(ForceEngineActivity.FRAME_DURATION - (SystemClock.uptimeMillis() - start), 0));
-			}
 		}
 	}
 
@@ -79,7 +74,12 @@ public class RenderThread implements Runnable, Choreographer.FrameCallback {
 
 	private void renderCanvas(Canvas canvas) {
 		if (canvas != null) {
-			mPaint.setColor(Color.argb(128, 255, 255, 255));
+			if (mClear) {
+				mPaint.setColor(Color.WHITE);
+				mClear = false;
+			} else {
+				mPaint.setColor(Color.argb(128, 255, 255, 255));
+			}
 			canvas.drawRect(0, 0, mSurface.getMeasuredWidth(), mSurface.getMeasuredHeight(), mPaint);
 
 			mPaint.setColor(Color.GRAY);
@@ -105,6 +105,14 @@ public class RenderThread implements Runnable, Choreographer.FrameCallback {
 	public void doFrame(long frameTimeNanos) {
 		render();
 
+		if (mHandler != null) {
+			mHandler.post(this);
+		}
+
 		Choreographer.getInstance().postFrameCallback(this);
+	}
+
+	public void clearNext() {
+		mClear = true;
 	}
 }
