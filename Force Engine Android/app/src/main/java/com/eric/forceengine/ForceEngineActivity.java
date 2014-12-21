@@ -271,7 +271,7 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 							event.getEventTime() - event.getDownTime() < DRAG_MIN_TIME) {
 						mEngine.addForceCircle(new ColoredForceCircle(
 								event.getX(pointerIndex), event.getY(pointerIndex), 0, 0,
-								RADIUS, MASS, DEFAULT_RESTITUTION, UiUtils.randomColor(mEngine)));
+								RADIUS, MASS, mRestitution, UiUtils.randomColor(mEngine)));
 					}
 
 					mDragging.remove(id);
