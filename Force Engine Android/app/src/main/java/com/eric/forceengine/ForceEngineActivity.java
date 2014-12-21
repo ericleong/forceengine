@@ -146,7 +146,9 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_clear) {
+		if (id == android.R.id.home) {
+			onBackPressed();
+		} else if (id == R.id.action_clear) {
 			mEngine.clear();
 			return true;
 		} else if (id == R.id.action_settings) {
@@ -164,6 +166,9 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 					fragmentTransaction.add(R.id.overlay, fragment);
 					fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 					fragmentTransaction.addToBackStack(null);
+					getActionBar().setDisplayHomeAsUpEnabled(true);
+					getActionBar().setDisplayUseLogoEnabled(false);
+					getActionBar().setTitle(R.string.title_fragment_settings);
 					fragmentTransaction.commit();
 				}
 			} else {
@@ -171,6 +176,18 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 			}
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onBackPressed() {
+		FragmentManager fragmentManager = getFragmentManager();
+
+		if (fragmentManager.findFragmentById(R.id.overlay) != null) {
+			getActionBar().setDisplayHomeAsUpEnabled(false);
+			getActionBar().setTitle(R.string.app_name);
+		}
+
+		super.onBackPressed();
 	}
 
 	public PointVector isInsideCircle(float x, float y) {

@@ -4,7 +4,7 @@
     <string name="app_name">Force Engine</string>
     <string name="action_clear">Clear</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_configuration">Settings</string>
+    <string name="title_fragment_settings">Settings</string>
     <string name="restitution">Restitution</string>
     <string name="friction">Friction</string>
     <string name="gravity">Gravity</string>
