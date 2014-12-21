@@ -23,10 +23,11 @@ public class SettingsFragment extends Fragment {
 	private static final String ARG_RESTITUTION = "restitution";
 	private static final String ARG_FRICTION = "friction";
 	private static final String ARG_GRAVITY = "gravity";
+	private static final String ARG_TRAILS = "trails";
 
 	private SeekBar mRestitutionBar, mFrictionBar;
 
-	private Switch mGravitySwitch;
+	private Switch mGravitySwitch, mTrailsSwitch;
 
 	private OnSettingsInteractionListener mListener;
 
@@ -41,15 +42,17 @@ public class SettingsFragment extends Fragment {
 	 * @param restitution the resitution.
 	 * @param friction    the friction.
 	 * @param gravityEnabled whether or not gravity is enabled
+	 * @param trailsEnabled whether or not trails are enabled
 	 * @return A new instance of SettingsFragment.
 	 */
 	public static SettingsFragment newInstance(float restitution, float friction,
-	                                           boolean gravityEnabled) {
+	                                           boolean gravityEnabled, boolean trailsEnabled) {
 		SettingsFragment fragment = new SettingsFragment();
 		Bundle args = new Bundle();
 		args.putFloat(ARG_RESTITUTION, restitution);
 		args.putFloat(ARG_FRICTION, friction);
 		args.putBoolean(ARG_GRAVITY, gravityEnabled);
+		args.putBoolean(ARG_TRAILS, trailsEnabled);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -64,11 +67,13 @@ public class SettingsFragment extends Fragment {
 			float restitution = ForceEngineActivity.DEFAULT_RESTITUTION;
 			float friction = ForceEngineActivity.DEFAULT_FRICTION;
 			boolean gravity = ForceEngineActivity.DEFAULT_GRAVITY_ENABLED;
+			boolean trails = ForceEngineActivity.DEFAULT_TRAILS_ENABLED;
 
 			if (getArguments() != null) {
 				restitution = getArguments().getFloat(ARG_RESTITUTION, ForceEngineActivity.DEFAULT_RESTITUTION);
 				friction = getArguments().getFloat(ARG_FRICTION, ForceEngineActivity.DEFAULT_FRICTION);
 				gravity = getArguments().getBoolean(ARG_GRAVITY, ForceEngineActivity.DEFAULT_GRAVITY_ENABLED);
+				trails = getArguments().getBoolean(ARG_TRAILS, ForceEngineActivity.DEFAULT_TRAILS_ENABLED);
 			}
 
 			mRestitutionBar = (SeekBar) rootView.findViewById(R.id.restitution);
@@ -135,6 +140,21 @@ public class SettingsFragment extends Fragment {
 					}
 				});
 			}
+
+			mTrailsSwitch = (Switch) rootView.findViewById(R.id.trails);
+
+			if (mTrailsSwitch != null) {
+				mTrailsSwitch.setChecked(trails);
+
+				mTrailsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+						if (mListener != null) {
+							mListener.onTrailsEnabledChanged(isChecked);
+						}
+					}
+				});
+			}
 		}
 
 		return rootView;
@@ -183,6 +203,11 @@ public class SettingsFragment extends Fragment {
 		 * @param gravityEnabled whether or not gravity is enabled
 		 */
 		public void onGravityEnabledChanged(boolean gravityEnabled);
+
+		/**
+		 * @param trailsEnabled whether or not trails are enabled
+		 */
+		public void onTrailsEnabledChanged(boolean trailsEnabled);
 	}
 
 }

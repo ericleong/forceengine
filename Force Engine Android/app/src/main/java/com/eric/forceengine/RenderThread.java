@@ -27,11 +27,15 @@ public class RenderThread implements Runnable, Choreographer.FrameCallback {
 
 	private static final String TAG = RenderThread.class.getSimpleName();
 
+	public static final int CLEAR_WHITE = Color.WHITE;
+	public static final int CLEAR_TRAILS = Color.argb(128, 255, 255, 255);
+
 	private PhysicsEngine mEngine;
 	private SurfaceView mSurface;
 	private Handler mHandler;
 
 	private Paint mPaint;
+	private int mClearColor;
 
 	private boolean mClear;
 
@@ -42,6 +46,8 @@ public class RenderThread implements Runnable, Choreographer.FrameCallback {
 
 		mPaint = new Paint();
 		mPaint.setAntiAlias(true);
+
+		mClearColor = CLEAR_TRAILS;
 	}
 
 	@Override
@@ -78,7 +84,7 @@ public class RenderThread implements Runnable, Choreographer.FrameCallback {
 				mPaint.setColor(Color.WHITE);
 				mClear = false;
 			} else {
-				mPaint.setColor(Color.argb(128, 255, 255, 255));
+				mPaint.setColor(mClearColor);
 			}
 			canvas.drawRect(0, 0, mSurface.getMeasuredWidth(), mSurface.getMeasuredHeight(), mPaint);
 
@@ -114,5 +120,9 @@ public class RenderThread implements Runnable, Choreographer.FrameCallback {
 
 	public void clearNext() {
 		mClear = true;
+	}
+
+	public void setClearColor(int mClearColor) {
+		this.mClearColor = mClearColor;
 	}
 }

@@ -8,5 +8,6 @@
     <string name="restitution">Restitution</string>
     <string name="friction">Friction</string>
     <string name="gravity">Gravity</string>
+    <string name="trails">Trails</string>
 
 </resources>

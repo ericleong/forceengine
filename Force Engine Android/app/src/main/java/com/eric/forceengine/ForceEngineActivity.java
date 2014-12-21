@@ -45,6 +45,7 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 	public static final float DEFAULT_RESTITUTION = 0.9f;
 	public static final float DEFAULT_FRICTION = 0.1f;
 	public static final boolean DEFAULT_GRAVITY_ENABLED = true;
+	public static final boolean DEFAULT_TRAILS_ENABLED = true;
 
 	private static final double DRAG_SPRING_CONSTANT = 1.0 / 5.0;
 	private static final double DRAG_FRICTION = 1.0;
@@ -63,6 +64,7 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 	private Map<Integer, Pair<PointVector, forceengine.objects.Point>> mDragging = new HashMap<Integer, Pair<PointVector, forceengine.objects.Point>>();
 
 	private boolean mGravityEnabled = DEFAULT_GRAVITY_ENABLED;
+	private boolean mTrailsEnabled = DEFAULT_TRAILS_ENABLED;
 	private float mRestitution = DEFAULT_RESTITUTION;
 	private float mFriction = DEFAULT_FRICTION;
 
@@ -152,7 +154,7 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 
 			if (fragmentManager.findFragmentById(R.id.overlay) == null) {
 				FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-				Fragment fragment = SettingsFragment.newInstance(mRestitution, mFriction, mGravityEnabled);
+				Fragment fragment = SettingsFragment.newInstance(mRestitution, mFriction, mGravityEnabled, mTrailsEnabled);
 
 				View overlay = findViewById(R.id.overlay);
 
@@ -313,5 +315,13 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 	@Override
 	public void onGravityEnabledChanged(boolean gravityEnabled) {
 		mGravityEnabled = gravityEnabled;
+	}
+
+	@Override
+	public void onTrailsEnabledChanged(boolean trailsEnabled) {
+		mTrailsEnabled = trailsEnabled;
+
+		mRenderThread.setClearColor(
+				mTrailsEnabled ? RenderThread.CLEAR_TRAILS : RenderThread.CLEAR_WHITE);
 	}
 }
