@@ -4,7 +4,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.Choreographer;
 import android.view.SurfaceHolder;
@@ -20,7 +19,7 @@ import forceengine.physics.PhysicsEngine;
 /**
  * Renders the objects in the {@link forceengine.physics.PhysicsEngine} onto a
  * {@link android.view.SurfaceView}.
- *
+ * <p/>
  * Created by Eric on 8/25/2014.
  */
 public class RenderThread implements Runnable, Choreographer.FrameCallback {

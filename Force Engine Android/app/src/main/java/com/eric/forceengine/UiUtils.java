@@ -15,6 +15,10 @@ import forceengine.physics.PhysicsEngine;
  */
 public class UiUtils {
 
+	/**
+	 * @param dp the length to convert, in dp
+	 * @return the length in pixels.
+	 */
 	public static float getPxFromDp(float dp) {
 		return dp * (Resources.getSystem().getDisplayMetrics().densityDpi / 160f);
 	}
@@ -25,6 +29,7 @@ public class UiUtils {
 	public static int randomColor(PhysicsEngine engine) {
 		int newColor, previousColor = Color.BLACK;
 
+		// get the last color
 		if (engine != null && engine.getForceCircles() != null && engine.getForceCircles().size() > 1) {
 			ForceCircle fc = engine.getForceCircle(engine.getForceCircles().size() - 1);
 			if (fc instanceof ColoredForceCircle) {

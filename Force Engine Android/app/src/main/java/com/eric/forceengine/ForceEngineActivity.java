@@ -13,6 +13,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Pair;
+import android.util.SparseArray;
 import android.view.Choreographer;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,9 +24,6 @@ import android.view.View;
 
 import com.eric.forceengine.objects.ColoredForceCircle;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import forceengine.objects.Force;
 import forceengine.objects.ForceCircle;
 import forceengine.objects.PointVector;
@@ -33,13 +31,14 @@ import forceengine.objects.RectVector;
 import forceengine.objects.Vector;
 import forceengine.physics.PhysicsEngine;
 
-
+/**
+ * Demos the capabilities of the Force Engine.
+ */
 public class ForceEngineActivity extends Activity implements View.OnTouchListener,
 		SensorEventListener, SettingsFragment.OnSettingsInteractionListener {
 
 	private static final String TAG = ForceEngineActivity.class.getSimpleName();
 
-	public static final long FRAME_DURATION = 16666667; // ns
 	private static final float RADIUS = UiUtils.getPxFromDp(36);
 	private static final float MASS = 100;
 	public static final float DEFAULT_RESTITUTION = 0.9f;
@@ -55,13 +54,12 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 	private RenderThread mRenderThread;
 
 	private PhysicsEngine mEngine;
-	private SurfaceView mForceSurface;
 	private Vector mGravity;
 
 	private SensorManager mSensorManager;
 	private Sensor mSensor;
 
-	private Map<Integer, Pair<PointVector, forceengine.objects.Point>> mDragging = new HashMap<Integer, Pair<PointVector, forceengine.objects.Point>>();
+	private SparseArray<Pair<PointVector, forceengine.objects.Point>> mDragging = new SparseArray<>();
 
 	private boolean mGravityEnabled = DEFAULT_GRAVITY_ENABLED;
 	private boolean mTrailsEnabled = DEFAULT_TRAILS_ENABLED;
@@ -88,7 +86,9 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 			public Vector accelerate(Force f, PointVector pv, double t) {
 				Vector v = super.accelerate(f, pv, t);
 
-				for (Pair<PointVector, forceengine.objects.Point> drag : mDragging.values()) {
+				for (int i = 0; i < mDragging.size(); i++) {
+					Pair<PointVector, forceengine.objects.Point> drag = mDragging.get(mDragging.keyAt(i));
+
 					if (f == drag.first && drag.second != null) {
 						v.add(new RectVector(
 								(drag.second.getX() - f.getX()) * DRAG_SPRING_CONSTANT - f.getvx() * DRAG_FRICTION,
@@ -106,10 +106,10 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 			}
 		};
 
-		mForceSurface = (SurfaceView) findViewById(R.id.surface);
-		if (mForceSurface != null) {
-			mForceSurface.setOnTouchListener(this);
-			mForceSurface.getHolder().addCallback(new SurfaceHolder.Callback() {
+		SurfaceView surface = (SurfaceView) findViewById(R.id.surface);
+		if (surface != null) {
+			surface.setOnTouchListener(this);
+			surface.getHolder().addCallback(new SurfaceHolder.Callback() {
 				@Override
 				public void surfaceCreated(SurfaceHolder holder) {
 
@@ -129,7 +129,7 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 			});
 		}
 
-		mRenderThread = new RenderThread(mEngine, mForceSurface, new Handler());
+		mRenderThread = new RenderThread(mEngine, surface, new Handler());
 		mRenderThread.run();
 	}
 
@@ -166,10 +166,13 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 					fragmentTransaction.add(R.id.overlay, fragment);
 					fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 					fragmentTransaction.addToBackStack(null);
-					getActionBar().setDisplayHomeAsUpEnabled(true);
-					getActionBar().setDisplayUseLogoEnabled(false);
-					getActionBar().setTitle(R.string.title_fragment_settings);
 					fragmentTransaction.commit();
+
+					if (getActionBar() != null) {
+						getActionBar().setDisplayHomeAsUpEnabled(true);
+						getActionBar().setDisplayUseLogoEnabled(false);
+						getActionBar().setTitle(R.string.title_fragment_settings);
+					}
 				}
 			} else {
 				onBackPressed();
@@ -182,7 +185,7 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 	public void onBackPressed() {
 		FragmentManager fragmentManager = getFragmentManager();
 
-		if (fragmentManager.findFragmentById(R.id.overlay) != null) {
+		if (fragmentManager.findFragmentById(R.id.overlay) != null && getActionBar() != null) {
 			getActionBar().setDisplayHomeAsUpEnabled(false);
 			getActionBar().setTitle(R.string.app_name);
 		}
@@ -190,7 +193,13 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 		super.onBackPressed();
 	}
 
-	public PointVector isInsideCircle(float x, float y) {
+	/**
+	 * @param x the x dimension of a point
+	 * @param y the y dimension of a point
+	 * @return whether or not the point is near or inside a {@link forceengine.objects.ForceCircle}
+	 * in the engine
+	 */
+	public PointVector isNearCircle(float x, float y) {
 		double minDistSq = -1;
 		double distSq;
 		PointVector point = null;
@@ -217,11 +226,11 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 				for (int i = 0; i < event.getPointerCount(); i++) {
 					int id = event.getPointerId(i);
 
-					if (!mDragging.containsKey(id)) {
-						PointVector touching = isInsideCircle(event.getX(i), event.getY(i));
+					if (mDragging.get(id) == null) {
+						PointVector touching = isNearCircle(event.getX(i), event.getY(i));
 
 						if (touching != null) {
-							mDragging.put(id, new Pair<PointVector, forceengine.objects.Point>(
+							mDragging.put(id, new Pair<>(
 									touching,
 									new forceengine.objects.Point(event.getX(i), event.getY(i))
 							));
@@ -241,7 +250,7 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 				for (int i = 0; i < event.getPointerCount(); i++) {
 					int id = event.getPointerId(i);
 
-					if (mDragging.containsKey(id)) {
+					if (mDragging.get(id) != null) {
 						Pair<PointVector, forceengine.objects.Point> dragging = mDragging.get(id);
 
 						if (dragging.first != null && dragging.second != null) {
@@ -263,7 +272,7 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 
 				int id = event.getPointerId(pointerIndex);
 
-				if (mDragging.containsKey(id)) {
+				if (mDragging.get(id) != null) {
 
 					Pair<PointVector, forceengine.objects.Point> dragging = mDragging.get(id);
 
@@ -309,7 +318,7 @@ public class ForceEngineActivity extends Activity implements View.OnTouchListene
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		if (event.values != null) {
+		if (mGravity != null) {
 			mGravity.setvx(-event.values[0]);
 			mGravity.setvy(event.values[1]);
 		}

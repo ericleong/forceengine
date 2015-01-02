@@ -39,10 +39,10 @@ public class SettingsFragment extends Fragment {
 	 * Use this factory method to create a new instance of
 	 * this fragment using the provided parameters.
 	 *
-	 * @param restitution the resitution.
-	 * @param friction    the friction.
+	 * @param restitution    the resitution.
+	 * @param friction       the friction.
 	 * @param gravityEnabled whether or not gravity is enabled
-	 * @param trailsEnabled whether or not trails are enabled
+	 * @param trailsEnabled  whether or not trails are enabled
 	 * @return A new instance of SettingsFragment.
 	 */
 	public static SettingsFragment newInstance(float restitution, float friction,
