@@ -1,4 +1,4 @@
-![Force Engine logo](/Force Engine/forceengine2.png?raw=true "Image made in GIMP")
+![Force Engine logo](/Force%20Engine/forceengine2.png?raw=true)
 
 Force Engine 2
 ==============
