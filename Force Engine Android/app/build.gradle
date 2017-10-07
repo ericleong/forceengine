@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 26
+    buildToolsVersion '25.0.3'
 
     defaultConfig {
         applicationId "com.eric.forceengine"
         minSdkVersion 19
-        targetSdkVersion 21
+        targetSdkVersion 26
         versionCode 1
         versionName "0.1"
     }
