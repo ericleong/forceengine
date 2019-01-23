@@ -28,7 +28,7 @@ import forceengine.physics.integrator.RK4Integrator;
 
 /** 
  * Forces Engine (basic 2d physics/game engine)
- * @author Eric Leong (theprogrammer)
+ * @author Eric Leong
  * @since Dec 28, 2008
  * @version 2
  */
